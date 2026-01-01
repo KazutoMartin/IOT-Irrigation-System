@@ -19,7 +19,7 @@ from channels.security.websocket import AllowedHostsOriginValidator
 
 # Import your routing (if you have WebSocket consumers)
 try:
-	from irrigation_api.routing import websocket_urlpatterns
+	from core.routing import websocket_urlpatterns
 except ImportError:
 	websocket_urlpatterns = []
 
