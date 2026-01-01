@@ -96,4 +96,4 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Device Token
-DEVICE_TOKEN = os.getenv('DEVICE_TOKEN', 'your-secure-device-token-here')
+DEVICE_TOKEN = "SECRET"
