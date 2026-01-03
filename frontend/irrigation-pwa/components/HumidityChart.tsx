@@ -41,12 +41,16 @@ export default function HumidityChart({ data, minThreshold, maxThreshold }: Humi
       {
         label: 'Humidity (%)',
         data: data.map(d => d.humidity),
-        borderColor: 'rgb(59, 130, 246)',
-        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+        borderColor: '#6366f1',
+        backgroundColor: 'rgba(99, 102, 241, 0.2)',
         fill: true,
-        tension: 0.4,
-        pointRadius: 2,
-        pointHoverRadius: 5,
+        tension: 0,
+        pointRadius: 3,
+        pointHoverRadius: 6,
+        pointBackgroundColor: '#a855f7',
+        pointBorderColor: '#1a1a2e',
+        pointBorderWidth: 2,
+        borderWidth: 3,
       },
     ],
   };
@@ -61,20 +65,60 @@ export default function HumidityChart({ data, minThreshold, maxThreshold }: Humi
       tooltip: {
         mode: 'index' as const,
         intersect: false,
+        backgroundColor: '#1a1a2e',
+        titleColor: '#6366f1',
+        bodyColor: '#a855f7',
+        borderColor: '#6366f1',
+        borderWidth: 2,
+        padding: 10,
+        titleFont: {
+          family: 'Press Start 2P',
+          size: 8,
+        },
+        bodyFont: {
+          family: 'Press Start 2P',
+          size: 8,
+        },
       },
     },
     scales: {
       y: {
         min: 0,
         max: 100,
+        grid: {
+          color: 'rgba(99, 102, 241, 0.1)',
+          lineWidth: 1,
+        },
+        border: {
+          color: '#6366f1',
+          width: 2,
+        },
         ticks: {
+          color: '#a855f7',
+          font: {
+            family: 'Press Start 2P',
+            size: 8,
+          },
           callback: (value: any) => `${value}%`,
         },
       },
       x: {
+        grid: {
+          color: 'rgba(168, 85, 247, 0.1)',
+          lineWidth: 1,
+        },
+        border: {
+          color: '#a855f7',
+          width: 2,
+        },
         ticks: {
+          color: '#6366f1',
           maxRotation: 0,
           autoSkipPadding: 20,
+          font: {
+            family: 'Press Start 2P',
+            size: 6,
+          },
         },
       },
     },
@@ -91,24 +135,62 @@ export default function HumidityChart({ data, minThreshold, maxThreshold }: Humi
   }, [data]);
 
   return (
-    <div className="bg-white rounded-lg shadow p-4">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold text-gray-800">Humidity Over Time</h2>
-        <div className="text-sm text-gray-600">
-          Last 60 seconds
+    <div className="bg-[#1a1a2e] pixel-corners pixel-border p-4 scanline">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-4 pb-2 border-b-2 border-indigo-600/30">
+        <h2 className="text-xs md:text-sm font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500 glow-text">
+          HUMIDITY_MONITOR
+        </h2>
+        <div className="flex items-center gap-2">
+          <div className="w-2 h-2 bg-purple-500 pixel-corners animate-pulse"></div>
+          <span className="text-[8px] text-purple-400">LIVE_60s</span>
         </div>
       </div>
-      <div style={{ height: '300px' }}>
+
+      {/* Chart Container with CRT Effect */}
+      <div className="relative bg-[#0f0f1e] border-2 border-indigo-900/50 pixel-corners p-3" style={{ height: '300px' }}>
+        <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-10">
+          <div className="w-full h-full" style={{
+            backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(99, 102, 241, 0.3) 2px, rgba(99, 102, 241, 0.3) 4px)'
+          }}></div>
+        </div>
         <Line ref={chartRef} data={chartData} options={options} />
       </div>
-      <div className="mt-4 flex justify-around text-sm">
-        <div className="text-center">
-          <div className="text-gray-600">Min Threshold</div>
-          <div className="text-lg font-semibold text-red-600">{minThreshold}%</div>
+
+      {/* Threshold Indicators */}
+      <div className="mt-4 grid grid-cols-2 gap-3">
+        <div className="bg-gradient-to-br from-red-900/30 to-red-950/50 border-2 border-red-500/40 pixel-corners p-3">
+          <div className="text-[8px] text-red-300 mb-1 tracking-wider">MIN_THRESHOLD</div>
+          <div className="flex items-baseline gap-1">
+            <div className="text-xl md:text-2xl font-bold text-red-400 glow-text tabular-nums">
+              {minThreshold}
+            </div>
+            <span className="text-xs text-red-500">%</span>
+          </div>
+          <div className="mt-2 flex gap-1">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="flex-1 h-1 bg-red-950 pixel-corners">
+                {i < 2 && <div className="h-full bg-red-500"></div>}
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="text-center">
-          <div className="text-gray-600">Max Threshold</div>
-          <div className="text-lg font-semibold text-green-600">{maxThreshold}%</div>
+
+        <div className="bg-gradient-to-br from-green-900/30 to-green-950/50 border-2 border-green-500/40 pixel-corners p-3">
+          <div className="text-[8px] text-green-300 mb-1 tracking-wider">MAX_THRESHOLD</div>
+          <div className="flex items-baseline gap-1">
+            <div className="text-xl md:text-2xl font-bold text-green-400 glow-text tabular-nums">
+              {maxThreshold}
+            </div>
+            <span className="text-xs text-green-500">%</span>
+          </div>
+          <div className="mt-2 flex gap-1">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="flex-1 h-1 bg-green-950 pixel-corners">
+                {i < 4 && <div className="h-full bg-green-500"></div>}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

@@ -67,7 +67,7 @@ def main():
     print(f"Device ID: {DEVICE_ID}")
     print("=" * 60)
 
-    interval = 5  # seconds
+    interval = 2  # seconds
 
     try:
         while True:
