@@ -8,7 +8,19 @@ A full-stack IoT solution for automated irrigation management with real-time mon
 - Remote pump control from web dashboard  
 - Progressive Web App (PWA)  
 - ESP32 device integration  
-- REST API for historical telemetry  
+- REST API for historical telemetry
+
+## 🧠 Irrigation Logic
+
+The system uses a threshold-based control mechanism managed entirely by the backend:
+
+- The ESP32 periodically sends soil humidity readings to the Django backend via HTTP.
+- The backend continuously evaluates incoming data against configurable minimum and maximum humidity thresholds.
+- When the humidity level falls below the minimum threshold, the backend issues a real-time command to activate the irrigation pump.
+- Once the humidity reaches or exceeds the maximum threshold, the backend sends a command to deactivate the pump, preventing over‑irrigation.
+- Pump control commands are delivered to the ESP32 using WebSocket-based real-time communication, ensuring low latency and reliable state synchronization.
+
+**This design centralizes decision-making in the backend, enabling consistent control logic, easy threshold tuning, and scalable deployment across multiple devices.**
 
 ## 🛠 Tech Stack
 
@@ -30,25 +42,6 @@ Infrastructure:
 - PM2
 - Ubuntu VPS
 
-## 📁 Project Structure
-
-IOT-Irrigation-System/
-- backend/
-  - config/
-    - settings.py
-    - asgi.py
-    - irrigation/
-      - models.py
-      - views.py
-      - consumers.py
-      - routing.py
-- frontend/
-  - irrigation-pwa/
-    - app/
-    - components/
-    - lib/
-- scripts/
-  - esp32_simulator.py
 
 ## 🚀 Backend Setup
 
