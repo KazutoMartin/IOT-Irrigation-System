@@ -100,5 +100,3 @@ Nginx as reverse proxy
 
 MIT
 
-Deployed at: 141.11.182.226  
-Status: Production Ready ✅
