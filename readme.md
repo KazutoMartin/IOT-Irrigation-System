@@ -1,6 +1,12 @@
 # 🌾 IoT Smart Irrigation System
 
-A full-stack IoT solution for automated irrigation management with real-time monitoring and remote pump control.
+![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?style=flat-square&logo=python&logoColor=white)
+![Django](https://img.shields.io/badge/Django-5.0%2B-092E20?style=flat-square&logo=django&logoColor=white)
+![Next.js](https://img.shields.io/badge/Next.js-14%2B-000000?style=flat-square&logo=nextdotjs&logoColor=white)
+![ESP32](https://img.shields.io/badge/ESP32-Compatible-E7352C?style=flat-square&logo=espressif&logoColor=white)
+
+
+A full-stack IoT solution for automated irrigation management featuring real-time monitoring, remote pump control, and responsive web interface. Built with Django Channels WebSocket backend, Next.js Progressive Web App frontend, and ESP32 microcontroller integration.
 
 ## 🚀 Features
 
@@ -84,6 +90,10 @@ Use the ESP32 WebSocket simulator to send telemetry and receive pump commands.
 - Environment variables for secrets
 - HTTPS/WSS recommended
 
+> ⚠️ The configuration and example values in this repository are intended for **development only**.  
+> Always use a `.env` file and keep secret keys out of the codebase, especially in production.
+
+
 ## 📊 Architecture
 
 ESP32 ⇄ Django Channels ⇄ Next.js PWA  
@@ -98,5 +108,6 @@ Nginx as reverse proxy
 
 ## 📝 License
 
-MIT
+This project is licensed under the **MIT License**.  
+See the [LICENSE](LICENSE) file for details.
 
