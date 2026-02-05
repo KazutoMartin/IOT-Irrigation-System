@@ -41,14 +41,14 @@ export default function HumidityChart({ data, minThreshold, maxThreshold }: Humi
       {
         label: 'Humidity (%)',
         data: data.map(d => d.humidity),
-        borderColor: '#6366f1',
-        backgroundColor: 'rgba(99, 102, 241, 0.2)',
+        borderColor: 'rgb(99, 102, 241)',
+        backgroundColor: 'rgba(99, 102, 241, 0.1)',
         fill: true,
-        tension: 0,
+        tension: 0.1,
         pointRadius: 3,
         pointHoverRadius: 6,
-        pointBackgroundColor: '#a855f7',
-        pointBorderColor: '#1a1a2e',
+        pointBackgroundColor: 'rgb(167, 139, 250)',
+        pointBorderColor: 'rgb(99, 102, 241)',
         pointBorderWidth: 2,
         borderWidth: 3,
       },
@@ -65,20 +65,26 @@ export default function HumidityChart({ data, minThreshold, maxThreshold }: Humi
       tooltip: {
         mode: 'index' as const,
         intersect: false,
-        backgroundColor: '#1a1a2e',
-        titleColor: '#6366f1',
-        bodyColor: '#a855f7',
-        borderColor: '#6366f1',
+        backgroundColor: 'rgba(26, 26, 46, 0.95)',
+        titleColor: 'rgb(167, 139, 250)',
+        bodyColor: 'rgb(129, 140, 248)',
+        borderColor: 'rgb(99, 102, 241)',
         borderWidth: 2,
-        padding: 10,
+        padding: 12,
+        displayColors: false,
         titleFont: {
-          family: 'Press Start 2P',
-          size: 8,
+          family: "'Press Start 2P', cursive",
+          size: 10,
         },
         bodyFont: {
-          family: 'Press Start 2P',
-          size: 8,
+          family: "'Press Start 2P', cursive",
+          size: 9,
         },
+        callbacks: {
+          label: function(context: any) {
+            return `${context.parsed.y}%`;
+          }
+        }
       },
     },
     scales: {
@@ -89,41 +95,40 @@ export default function HumidityChart({ data, minThreshold, maxThreshold }: Humi
           color: 'rgba(99, 102, 241, 0.1)',
           lineWidth: 1,
         },
-        border: {
-          color: '#6366f1',
-          width: 2,
-        },
         ticks: {
-          color: '#a855f7',
+          callback: (value: any) => `${value}%`,
+          color: 'rgb(129, 140, 248)',
           font: {
-            family: 'Press Start 2P',
+            family: "'Press Start 2P', cursive",
             size: 8,
           },
-          callback: (value: any) => `${value}%`,
+        },
+        border: {
+          color: 'rgb(99, 102, 241)',
         },
       },
       x: {
         grid: {
-          color: 'rgba(168, 85, 247, 0.1)',
+          color: 'rgba(139, 92, 246, 0.1)',
           lineWidth: 1,
         },
-        border: {
-          color: '#a855f7',
-          width: 2,
-        },
         ticks: {
-          color: '#6366f1',
           maxRotation: 0,
           autoSkipPadding: 20,
+          color: 'rgb(167, 139, 250)',
           font: {
-            family: 'Press Start 2P',
-            size: 6,
+            family: "'Press Start 2P', cursive",
+            size: 7,
           },
+        },
+        border: {
+          color: 'rgb(139, 92, 246)',
         },
       },
     },
     animation: {
-      duration: 300,
+      duration: 750,
+      easing: 'easeInOutQuart' as const,
     },
   };
 
@@ -135,64 +140,72 @@ export default function HumidityChart({ data, minThreshold, maxThreshold }: Humi
   }, [data]);
 
   return (
-    <div className="bg-[#1a1a2e] pixel-corners pixel-border p-4 scanline">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-4 pb-2 border-b-2 border-indigo-600/30">
-        <h2 className="text-xs md:text-sm font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500 glow-text">
-          HUMIDITY_MONITOR
+    <div className="bg-[#1a1a2e] pixel-corners pixel-border p-4 relative overflow-hidden h-full flex flex-col">
+      {/* Animated scanline effect */}
+      <div className="absolute inset-0 scanline pointer-events-none"></div>
+      
+      {/* Header with glitch effect */}
+      <div className="flex justify-between items-center mb-3 relative z-10">
+        <h2 className="text-sm font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500 glow-text animate-glitch-text">
+          HUMIDITY_GRAPH
         </h2>
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 bg-purple-500 pixel-corners animate-pulse"></div>
-          <span className="text-[8px] text-purple-400">LIVE_60s</span>
+          <div className="flex gap-1">
+            {[0, 1, 2].map((i) => (
+              <div
+                key={i}
+                className="w-1 h-1 bg-purple-500 pixel-corners animate-pulse"
+                style={{ animationDelay: `${i * 150}ms` }}
+              ></div>
+            ))}
+          </div>
+          <div className="text-[9px] text-purple-400 font-bold tracking-wider">
+            LAST_60_SEC
+          </div>
         </div>
       </div>
 
-      {/* Chart Container with CRT Effect */}
-      <div className="relative bg-[#0f0f1e] border-2 border-indigo-900/50 pixel-corners p-3" style={{ height: '300px' }}>
-        <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-10">
-          <div className="w-full h-full" style={{
-            backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(99, 102, 241, 0.3) 2px, rgba(99, 102, 241, 0.3) 4px)'
-          }}></div>
-        </div>
+      {/* Chart with fade-in animation */}
+      <div className="flex-1 relative z-10 animate-fade-in">
         <Line ref={chartRef} data={chartData} options={options} />
       </div>
 
-      {/* Threshold Indicators */}
-      <div className="mt-4 grid grid-cols-2 gap-3">
-        <div className="bg-gradient-to-br from-red-900/30 to-red-950/50 border-2 border-red-500/40 pixel-corners p-3">
-          <div className="text-[8px] text-red-300 mb-1 tracking-wider">MIN_THRESHOLD</div>
-          <div className="flex items-baseline gap-1">
-            <div className="text-xl md:text-2xl font-bold text-red-400 glow-text tabular-nums">
-              {minThreshold}
-            </div>
-            <span className="text-xs text-red-500">%</span>
+      {/* Threshold indicators with pulsing animation */}
+      <div className="mt-3 flex justify-around text-[10px] relative z-10">
+        <div className="text-center relative group">
+          <div className="absolute inset-0 bg-red-600/10 pixel-corners animate-pulse-slow"></div>
+          <div className="text-red-300/70 font-bold tracking-wider mb-1 relative z-10">MIN_THRESH</div>
+          <div className="text-lg font-bold text-red-400 glow-text relative z-10 animate-threshold-pulse">
+            {minThreshold}%
           </div>
-          <div className="mt-2 flex gap-1">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="flex-1 h-1 bg-red-950 pixel-corners">
-                {i < 2 && <div className="h-full bg-red-500"></div>}
-              </div>
-            ))}
+          {/* Warning indicator */}
+          <div className="flex justify-center gap-1 mt-1">
+            <div className="w-1 h-1 bg-red-500 pixel-corners animate-blink"></div>
+            <div className="w-1 h-1 bg-red-500 pixel-corners animate-blink" style={{ animationDelay: '0.5s' }}></div>
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-green-900/30 to-green-950/50 border-2 border-green-500/40 pixel-corners p-3">
-          <div className="text-[8px] text-green-300 mb-1 tracking-wider">MAX_THRESHOLD</div>
-          <div className="flex items-baseline gap-1">
-            <div className="text-xl md:text-2xl font-bold text-green-400 glow-text tabular-nums">
-              {maxThreshold}
-            </div>
-            <span className="text-xs text-green-500">%</span>
+        <div className="w-px bg-gradient-to-b from-transparent via-indigo-600 to-transparent"></div>
+
+        <div className="text-center relative group">
+          <div className="absolute inset-0 bg-green-600/10 pixel-corners animate-pulse-slow" style={{ animationDelay: '0.5s' }}></div>
+          <div className="text-green-300/70 font-bold tracking-wider mb-1 relative z-10">MAX_THRESH</div>
+          <div className="text-lg font-bold text-green-400 glow-text relative z-10 animate-threshold-pulse" style={{ animationDelay: '0.3s' }}>
+            {maxThreshold}%
           </div>
-          <div className="mt-2 flex gap-1">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="flex-1 h-1 bg-green-950 pixel-corners">
-                {i < 4 && <div className="h-full bg-green-500"></div>}
-              </div>
-            ))}
+          {/* Success indicator */}
+          <div className="flex justify-center gap-1 mt-1">
+            <div className="w-1 h-1 bg-green-500 pixel-corners animate-pulse"></div>
+            <div className="w-1 h-1 bg-green-500 pixel-corners animate-pulse" style={{ animationDelay: '0.5s' }}></div>
           </div>
         </div>
       </div>
+
+      {/* Corner decorations with animation */}
+      <div className="absolute top-2 left-2 w-2 h-2 border-t-2 border-l-2 border-indigo-500 pixel-corners animate-corner-glow"></div>
+      <div className="absolute top-2 right-2 w-2 h-2 border-t-2 border-r-2 border-purple-500 pixel-corners animate-corner-glow" style={{ animationDelay: '0.5s' }}></div>
+      <div className="absolute bottom-2 left-2 w-2 h-2 border-b-2 border-l-2 border-purple-500 pixel-corners animate-corner-glow" style={{ animationDelay: '1s' }}></div>
+      <div className="absolute bottom-2 right-2 w-2 h-2 border-b-2 border-r-2 border-indigo-500 pixel-corners animate-corner-glow" style={{ animationDelay: '1.5s' }}></div>
     </div>
   );
 }

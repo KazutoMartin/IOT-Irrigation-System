@@ -9,82 +9,73 @@ interface PumpStatusProps {
 
 export default function PumpStatus({ isOn, currentHumidity, isOnline }: PumpStatusProps) {
   return (
-    <div className="bg-[#1a1a2e] pixel-corners pixel-border p-6 scanline">
-      {/* Header with retro online indicator */}
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xs md:text-sm font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500 glow-text">
+    <div className="bg-[#1a1a2e] pixel-corners pixel-border p-4 relative overflow-hidden">
+      {/* Animated scanline effect */}
+      <div className="absolute inset-0 scanline pointer-events-none"></div>
+      
+      {/* Header with typing cursor animation */}
+      <div className="flex items-center justify-between mb-3 relative z-10">
+        <h2 className="text-sm font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500 glow-text">
           SYSTEM_STATUS
+          <span className="inline-block w-2 h-4 bg-indigo-400 ml-1 animate-blink"></span>
         </h2>
-        <div className="flex items-center gap-3">
-          <div className="relative">
-            <div className={`w-4 h-4 ${isOnline ? 'bg-green-400' : 'bg-red-500'} pixel-corners`}>
-              {isOnline && (
-                <div className="absolute inset-0 bg-green-400 pixel-corners animate-ping opacity-75"></div>
-              )}
-            </div>
-          </div>
-          <span className={`text-[8px] md:text-[10px] font-bold ${isOnline ? 'text-green-400' : 'text-red-400'}`}>
-            {isOnline ? '[ONLINE]' : '[OFFLINE]'}
+        <div className="flex items-center gap-2">
+          <div className={`w-2 h-2 pixel-corners ${isOnline ? 'bg-green-400 animate-pulse-glow' : 'bg-red-500 animate-blink-slow'}`} />
+          <span className="text-[10px] text-gray-400 font-bold tracking-wider">
+            {isOnline ? 'ONLINE' : 'OFFLINE'}
           </span>
         </div>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-2 gap-4">
-        {/* Humidity Display */}
-        <div className="relative bg-gradient-to-br from-blue-900/40 to-blue-950/60 border-2 border-blue-500/50 pixel-corners p-4">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-400 to-transparent opacity-50"></div>
-          <div className="text-[8px] text-blue-300 mb-2 tracking-wider">HUMIDITY</div>
-          <div className="text-2xl md:text-4xl font-bold text-blue-400 glow-text tabular-nums">
-            {currentHumidity !== null ? `${currentHumidity}` : '--'}
-            <span className="text-lg md:text-2xl">%</span>
+      <div className="grid grid-cols-2 gap-3 relative z-10">
+        {/* Humidity Box with value pop animation */}
+        <div className="text-center p-3 bg-gradient-to-br from-blue-950/50 to-indigo-950/50 pixel-corners border-2 border-indigo-600/50 relative group">
+          <div className="absolute inset-0 bg-indigo-600/10 pixel-corners animate-pulse-slow"></div>
+          <div className="text-[9px] text-indigo-300 mb-1 font-bold tracking-wider relative z-10">
+            HUMIDITY_LVL
           </div>
-          <div className="mt-2 h-2 bg-blue-950/50 pixel-corners overflow-hidden">
-            <div 
-              className="h-full bg-gradient-to-r from-blue-600 to-cyan-400 transition-all duration-500"
-              style={{ width: currentHumidity !== null ? `${currentHumidity}%` : '0%' }}
-            ></div>
+          <div className="text-3xl font-bold text-indigo-400 glow-text relative z-10 animate-value-update">
+            {currentHumidity !== null ? `${currentHumidity}%` : '--'}
           </div>
+          {/* Pixel decoration */}
+          <div className="absolute top-1 left-1 w-1 h-1 bg-indigo-400 pixel-corners"></div>
+          <div className="absolute bottom-1 right-1 w-1 h-1 bg-indigo-400 pixel-corners"></div>
         </div>
 
-        {/* Pump Status */}
-        <div className={`relative border-2 pixel-corners p-4 ${
-          isOn 
-            ? 'bg-gradient-to-br from-green-900/40 to-emerald-950/60 border-green-500/50' 
-            : 'bg-gradient-to-br from-gray-900/40 to-gray-950/60 border-gray-600/50'
-        }`}>
-          <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-${isOn ? 'green' : 'gray'}-400 to-transparent opacity-50`}></div>
-          <div className={`text-[8px] mb-2 tracking-wider ${isOn ? 'text-green-300' : 'text-gray-400'}`}>
+        {/* Pump Status Box with breathing animation */}
+        <div className="text-center p-3 bg-gradient-to-br from-purple-950/50 to-indigo-950/50 pixel-corners border-2 border-purple-600/50 relative group">
+          <div className={`absolute inset-0 pixel-corners ${isOn ? 'animate-breathing bg-green-600/10' : 'bg-gray-600/10'}`}></div>
+          <div className="text-[9px] text-purple-300 mb-1 font-bold tracking-wider relative z-10">
             PUMP_STATE
           </div>
-          <div className={`text-2xl md:text-4xl font-bold ${isOn ? 'text-green-400 glow-text' : 'text-gray-500'} mb-3`}>
+          <div className={`text-3xl font-bold relative z-10 ${isOn ? 'text-green-400 glow-text animate-pump-active' : 'text-gray-500'}`}>
             {isOn ? 'ON' : 'OFF'}
           </div>
           
-          {/* Animated Pump Indicator */}
-          <div className={`flex items-center gap-2 px-2 py-1 ${
-            isOn ? 'bg-green-950/60 border border-green-500/50' : 'bg-gray-900/60 border border-gray-600/50'
-          } pixel-corners text-[8px]`}>
-            <div className="flex gap-1">
-              {[0, 1, 2].map((i) => (
-                <div
-                  key={i}
-                  className={`w-1 h-3 ${isOn ? 'bg-green-400' : 'bg-gray-600'} pixel-corners ${
-                    isOn ? 'animate-pulse' : ''
-                  }`}
-                  style={{ animationDelay: `${i * 150}ms` }}
-                ></div>
-              ))}
+          {/* Animated status indicator */}
+          <div className={`mt-2 inline-flex items-center gap-2 px-2 py-1 pixel-corners text-[9px] font-bold tracking-wider relative z-10 ${
+            isOn ? 'bg-green-900/50 text-green-300 border border-green-500/50' : 'bg-gray-800/50 text-gray-400 border border-gray-600/50'
+          }`}>
+            <div className="relative">
+              <div className={`w-1.5 h-1.5 pixel-corners ${isOn ? 'bg-green-400' : 'bg-gray-500'}`} />
+              {isOn && (
+                <>
+                  <div className="absolute inset-0 w-1.5 h-1.5 bg-green-400 pixel-corners animate-ping"></div>
+                  <div className="absolute inset-0 w-1.5 h-1.5 bg-green-400 pixel-corners animate-pulse"></div>
+                </>
+              )}
             </div>
-            <span className={isOn ? 'text-green-400' : 'text-gray-500'}>
-              {isOn ? '[WATERING]' : '[IDLE]'}
-            </span>
+            {isOn ? 'WATERING' : 'IDLE'}
           </div>
+          
+          {/* Pixel decoration */}
+          <div className="absolute top-1 right-1 w-1 h-1 bg-purple-400 pixel-corners"></div>
+          <div className="absolute bottom-1 left-1 w-1 h-1 bg-purple-400 pixel-corners"></div>
         </div>
       </div>
 
-      {/* Decorative Bottom Bar */}
-      <div className="mt-4 h-1 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 pixel-corners"></div>
+      {/* Bottom pixel border animation */}
+      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-indigo-500 to-transparent animate-slide-right"></div>
     </div>
   );
 }
